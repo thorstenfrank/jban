@@ -59,7 +59,7 @@ public class Iban {
             throw new IllegalArgumentException("IBAN must not be empty!");
         }
         
-        String noWhitespace = ibanString.replaceAll(WHITESPACE_REGEX, EMPTY_STRING);
+        final String noWhitespace = ibanString.replaceAll(WHITESPACE_REGEX, EMPTY_STRING);
         
         validateAndAssign(
                 noWhitespace.substring(CCODE_START_INDEX, CHECKSUM_START_INDEX), 
@@ -116,7 +116,7 @@ public class Iban {
      * @return a formatted string representation of this IBAN with a blank every four characters
      */
     public String getPrintFormat() {
-        StringBuilder sb = new StringBuilder(countryCode.toString()).append(checksum);
+        final StringBuilder sb = new StringBuilder(countryCode.toString()).append(checksum);
         
         for (int i = 0; i < bban.length(); i += 4) {
             sb.append(BLANK_STRING);
@@ -138,7 +138,7 @@ public class Iban {
      * 
      * @return calculated checksum
      */
-    private void validateAndAssign(String countryCode, String bban) {
+    private void validateAndAssign(final String countryCode, final String bban) {
         validateAndAssign(CountryCode.fromString(countryCode), bban);
     }
     
@@ -147,7 +147,7 @@ public class Iban {
      * @param countryCode
      * @param bban
      */
-    private void validateAndAssign(CountryCode countryCode, String bban) {
+    private void validateAndAssign(final CountryCode countryCode, final String bban) {
         if (countryCode == null) {
             throw new IllegalArgumentException("Country code must be a valid ISO 3361-1 two-letter ID");
         }
@@ -156,16 +156,16 @@ public class Iban {
             throw new BbanValidationException("BBAN must not be empty!");
         } 
         
-        bban = bban.replaceAll(WHITESPACE_REGEX, EMPTY_STRING);
+        final String bbanFlat = bban.replaceAll(WHITESPACE_REGEX, EMPTY_STRING);
         
-        if (bban.length() != countryCode.getBbanLength()) {
+        if (bbanFlat.length() != countryCode.getBbanLength()) {
             throw new BbanValidationException(
                     String.format("BBAN for country %s must have %d characters, but was %d", 
-                            countryCode, countryCode.getBbanLength(), bban.length()));
+                            countryCode, countryCode.getBbanLength(), bbanFlat.length()));
         }
         
         this.countryCode = countryCode;
-        this.bban = bban;
+        this.bban = bbanFlat;
         this.checksum = calculateChecksum();        
     }
     
