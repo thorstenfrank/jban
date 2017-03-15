@@ -16,6 +16,8 @@
 package de.tfsw.ibanlib;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 
 import org.junit.Test;
 
@@ -62,16 +64,19 @@ public class IbanTest {
         assertEquals(CountryCode.DE, iban.getCountryCode());
         assertEquals("500105175407324931", iban.getBban());
         assertEquals("44", iban.getChecksum());
+        assertEquals("DE44500105175407324931", iban.toString());
         
         iban = new Iban("VG96VPVG0000012345678901");
         assertEquals(CountryCode.VG, iban.getCountryCode());
         assertEquals("VPVG0000012345678901", iban.getBban());
         assertEquals("96", iban.getChecksum());
+        assertEquals("VG96VPVG0000012345678901", iban.toString());
         
         iban = new Iban("MT84 MALT 0110 0001 2345 MTLC AST0 01S");
         assertEquals(CountryCode.MT, iban.getCountryCode());
         assertEquals("MALT011000012345MTLCAST001S", iban.getBban());
-        assertEquals("84", iban.getChecksum());        
+        assertEquals("84", iban.getChecksum());
+        assertEquals("MT84MALT011000012345MTLCAST001S", iban.toString());
     }
     
     @Test(expected = InvalidChecksumException.class)
@@ -100,20 +105,37 @@ public class IbanTest {
         assertEquals(CountryCode.DE, iban.getCountryCode());
         assertEquals("44", iban.getChecksum());
         assertEquals("500105175407324931", iban.getBban());
+        assertEquals("DE44500105175407324931", iban.toString());
         
         // leading and trailing whitespace
         iban = new Iban(CountryCode.LV, " BANK 0000 4351 9500 1 ");
         assertEquals(CountryCode.LV, iban.getCountryCode());
         assertEquals("80", iban.getChecksum());
         assertEquals("BANK0000435195001", iban.getBban());
+        assertEquals("LV80BANK0000435195001", iban.toString());
     }
     
     @Test
-    public void testGetPrintFormat() {
+    public void testToFormattedString() {
         Iban iban = new Iban("XK051212012345678906");
-        assertEquals("XK05 1212 0123 4567 8906", iban.getPrintFormat());
+        assertEquals("XK05 1212 0123 4567 8906", iban.toFormattedString());
         
         iban = new Iban(CountryCode.JO, "CBJO0010000000000131000302");
-        assertEquals("JO94 CBJO 0010 0000 0000 0131 0003 02", iban.getPrintFormat());
+        assertEquals("JO94 CBJO 0010 0000 0000 0131 0003 02", iban.toFormattedString());
+    }
+    
+    @Test
+    public void testEqualsAndHashCode() {
+    	Iban iban1 = new Iban("DE44 5001 0517 5407 3249 31");
+    	assertFalse(iban1.equals(null));
+    	assertFalse(iban1.equals("DE44 5001 0517 5407 3249 31")); // just the string
+    	
+    	Iban iban2 = new Iban(CountryCode.DE, "500105175407324931");
+    	assertEquals(iban1, iban2);
+    	assertEquals(iban1.hashCode(), iban2.hashCode());
+    	
+    	iban2 = new Iban("VG96VPVG0000012345678901");
+    	assertNotEquals(iban1, iban2);
+    	assertNotEquals(iban1.hashCode(), iban2.hashCode());
     }
 }
