@@ -18,25 +18,103 @@ package de.tfsw.iban;
 /**
  * ISO 3166-1 country codes and IBAN-specific format information.
  * 
+ * <p>
+ * Based on release 75 of the IBAN Registry, see https://www.swift.com/standards/data-standards/iban
+ * </p>
+ * 
  * @author Thorsten Frank
  */
 public enum CountryCode {
 
-    AD(20), AE(19), AL(24), AT(16), AZ(24), BA(16), BE(12), BG(18), BH(18), BR(25), BY(28), CH(17), CR(17), CY(24), 
-    CZ(20), DE(18), DK(14), DO(24), EE(16), ES(20), FI(14), FO(18), FR(23), GB(18), GE(18), GI(19), GL(18), GR(23), 
-    GT(24), HR(17), HU(24), IE(18), IL(19), IS(22), IT(23), JO(26), KW(26), KZ(16), LB(24), LC(28), LI(17), LT(16), 
-    LU(16), LV(17), MC(23), MD(20), ME(18), MK(15), MR(23), MT(27), MU(26), NL(14), NO(11), PK(20), PL(24), PS(25), 
-    PT(21), QA(25), RO(20), RS(18), SA(20), SC(27), SE(20), SI(15), SK(20), SM(23), ST(21), TL(19), TN(20), TR(22), 
-    UA(25), VG(20), XK(16);
+    AD(20, "\\d{4}\\d{4}\\w{12}"), // Andorra 
+    AE(19, "\\d{3}\\d{16}"), // United Arab Emirates 
+    AL(24, "\\d{8}\\w{16}"), // Albania 
+    AT(16, "\\d{5}\\d{11}"), // Austria
+    AZ(24, "[A-Z]{4}\\w{20}"), // Azerbaijan 
+    BA(16, "\\d{3}\\d{3}\\d{8}\\d{2}"), // Bosnia and Hergegovina 
+    BE(12, "\\d{3}\\d{7}\\d{2}"), // Belgium
+    BG(18, "[A-Z]{4}\\d{4}\\d{2}\\w{8}"), // Bulgaria
+    BH(18, "[A-Z]{4}\\w{14}"), // Bahrain
+    BR(25, "\\d{8}\\d{5}\\d{10}[A-Z]\\w"), // Brazil
+    BY(24, "\\w{4}\\d{4}\\w{16}"), // Belarus
+    CH(17, "\\d{5}\\w{12}"), // Switzerland
+    CR(18, "\\d{4}\\d{14}"), // Costa Rica
+    CY(24, "\\d{3}\\d{5}\\w{16}"), // Cyprus 
+    CZ(20, "\\d{4}\\d{6}\\d{10}"), // Czech Republic
+    DE(18, "\\d{8}\\d{10}"), // Germany
+    DK(14, "\\d{4}\\d{9}\\d{1}"), // Denmark
+    DO(24, "\\w{4}\\d{20}"), // Dominican Republic
+    EE(16, "\\d{2}\\d{2}\\d{11}\\d"), // Estonia
+    ES(20, "\\d{4}\\d{4}\\d\\d\\d{10}"), // Spain
+    FI(14, "\\d{3}\\d{11}"), // Finland
+    FO(14, "\\d{4}\\d{9}\\d"), // Faroe Islands
+    FR(23, "\\d{5}\\d{5}\\w{11}\\d{2}"), // France
+    GB(18, "[A-Z]{4}\\d{6}\\d{8}"), // United Kingdom
+    GE(18, "[A-Z]{2}\\d{16}"), // Georgia
+    GI(19, "[A-Z]{4}\\w{15}"), // Gibraltar
+    GL(14, "\\d{4}\\d{9}\\d"), // Greenland
+    GR(23, "\\d{3}\\d{4}\\w{16}"), // Greece
+    GT(24, "\\w{4}\\w{20}"), // Guatemala
+    HR(17, "\\d{7}\\d{10}"), // Croatia
+    HU(24, "\\d{3}\\d{4}\\d\\d{15}\\d"), // Hungary
+    IE(18, "[A-Z]{4}\\d{6}\\d{8}"), // Ireland
+    IL(19, "\\d{3}\\d{3}\\d{13}"), // Israel
+    IQ(19, "[A-Z]{4}\\d{3}\\d{12}"), // Iraq
+    IS(22, "\\d{4}\\d{2}\\d{6}\\d{10}"), // Iceland
+    IT(23, "[A-Z]\\d{5}\\d{5}\\w{12}"), // Italy
+    JO(26, "[A-Z]{4}\\d{4}\\w{18}"), // Jordan
+    KW(26, "[A-Z]{4}\\w{22}"), // Kuwait
+    KZ(16, "\\d{3}\\w{13}"), // Kazakhstan
+    LB(24, "\\d{4}\\w{20}"), // Lebanon
+    LC(28, "[A-Z]{4}\\w{24}"), // Saint Lucia
+    LI(17, "\\d{5}\\w{12}"), // Liechtenstein
+    LT(16, "\\d{5}\\d{11}"), // Lithuania
+    LU(16, "\\d{3}\\w{13}"), // Luxembourg
+    LV(17, "[A-Z]{4}\\w{13}"), // Latvia
+    MC(23, "\\d{5}\\d{5}\\w{11}\\d{2}"), // Monaco
+    MD(20, "\\w{2}\\w{18}"), // Moldova
+    ME(18, "\\d{3}\\d{13}\\d{2}"), // Montenegro
+    MK(15, "\\d{3}\\w{10}\\d{2}"), // Macedonia
+    MR(23, "\\d{5}\\d{5}\\d{11}\\d{2}"), // Mauritania
+    MT(27, "[A-Z]{4}\\d{5}\\w{18}"), // Malta
+    MU(26, "[A-Z]{4}\\d{2}\\d{2}\\d{12}\\d{3}\\w{3}"), // Mauritius
+    NL(14, "[A-Z]{4}\\d{10}"), // Netherlands 
+    NO(11, "\\d{4}\\d{6}\\d"), // Norway
+    PK(20, "[A-Z]{4}\\w{16}"), // Pakistan
+    PL(24, "\\d{8}\\d{16}"), // Poland
+    PS(25, "[A-Z]{4}\\w{21}"), // Palestine
+    PT(21, "\\d{4}\\d{4}\\d{11}\\d{2}"), // Portugal
+    QA(25, "[A-Z]{4}\\w{21}"), // Qatar
+    RO(20, "[A-Z]{4}\\w{16}"), // Romania
+    RS(18, "\\d{3}\\d{13}\\d{2}"), // Serbia
+    SA(20, "\\d{2}\\w{18}"), // Saudi Arabia
+    SC(27, "[A-Z]{4}\\d{2}\\d{2}\\d{16}[A-Z]{3}"), // Seychelles
+    SE(20, "\\d{3}\\d{16}\\d"), // Sweden
+    SI(15, "\\d{5}\\d{8}\\d{2}"), // Slovenia
+    SK(20, "\\d{4}\\d{6}\\d{10}"), // Slovakia
+    SM(23, "[A-Z]\\d{5}\\d{5}\\w{12}"), // San Marino
+    ST(21, "\\d{4}\\d{4}\\d{11}\\d{2}"), // Sao Tome and Principe
+    SV(24, "[A-Z]{4}\\d{20}"), // El Salvador
+    TL(19, "\\d{3}\\d{14}\\d{2}"), // East Timor
+    TN(20, "\\d{2}\\d{3}\\d{13}\\d{2}"), // Tunisia
+    TR(22, "\\d{5}\\d\\w{16}"), // Turkey
+    UA(25, "\\d{6}\\w{19}"), // Ukraine
+    VG(20, "[A-Z]{4}\\d{16}"), // Virgin Islands
+    XK(16, "\\d{4}\\d{10}\\d{2}"); // Kosovo
     
 	/** Country-specific BBAN length. */
     private int bbanLength;
 
+    /** Regular Expression of the BBAN pattern for this country code. */
+    private String bbanPattern;
+    
     /**
      * @param length country-specific BBAN length
+     * @param bbanPattern regular expression describing this country code's BBAN format
      */
-    private CountryCode(int bbanLength) {
+    private CountryCode(int bbanLength, String bbanPattern) {
         this.bbanLength = bbanLength;
+        this.bbanPattern = bbanPattern;
     }
 
     /**
@@ -48,6 +126,22 @@ public enum CountryCode {
     }
     
     /**
+     * 
+     * @return a regular expression describing this country code's BBAN format
+     */
+    public String getBbanPattern() {
+		return bbanPattern;
+	}
+
+    /**
+     * 
+     * @return a regular expression describing this country code's IBAN format
+     */
+    public String getIbanPattern() {
+    	return this.name()+"\\d{2}"+bbanPattern;
+    }
+    
+	/**
      * This method simply calls {@link #valueOf(String)} but wraps any {@link IllegalArgumentException} that may be
      * thrown there.
      * 
