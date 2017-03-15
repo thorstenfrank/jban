@@ -20,6 +20,8 @@ import java.math.BigInteger;
 /**
  * An international bank account number as defined by ISO 13616-1:2007.
  * 
+ * <p>Objects of this class are immutable and thread-safe.</p> 
+ * 
  * @author Thorsten Frank
  */
 public class Iban {
@@ -42,6 +44,8 @@ public class Iban {
     
     private static final BigInteger NINETY_EIGHT = new BigInteger("98");
     
+    private String ibanString;
+    
     private CountryCode countryCode;
 
     private String checksum;
@@ -53,6 +57,12 @@ public class Iban {
      * must be a valid and complete IBAN representation.
      * 
      * @param ibanString IBAN in string representation, may include blanks
+     * 
+     * @throws InvalidChecksumException if the supplied IBAN string's check digits are wrong
+     * @throws IllegalArgumentException if the supplied string is <code>null</code> or empty
+     * @throws UnknownCountryCodeException
+     * @throws BbanValidationException if the BBAN part of the supplied string is invalid according to the country's 
+     * 								   IBAN specification
      */
     public Iban(String ibanString) {
         if (ibanString == null || ibanString.isEmpty()) {
@@ -110,12 +120,20 @@ public class Iban {
     public String getBban() {
         return bban;
     }
-
+    
+    /**
+     * @return an unformatted string representation of this IBAN
+     */
+    @Override
+    public String toString() {
+    	return this.ibanString;
+    }
+    
     /**
      * 
      * @return a formatted string representation of this IBAN with a blank every four characters
      */
-    public String getPrintFormat() {
+    public String toFormattedString() {
         final StringBuilder sb = new StringBuilder(countryCode.toString()).append(checksum);
         
         for (int i = 0; i < bban.length(); i += 4) {
@@ -129,6 +147,29 @@ public class Iban {
         }
         
         return sb.toString();
+    }
+    
+    /**
+     * Compares the string represenations of the two IBAN instances.
+     * 
+     * @return <code>true</code> if this IBAN is identical to the supplied one 
+     */
+    @Override
+    public boolean equals(Object other) {
+    	boolean isEqual = false;
+    	if (other != null && other instanceof Iban) {
+    		isEqual = this.ibanString.equals(((Iban) other).ibanString);
+    	}
+    	
+    	return isEqual;
+    }
+    
+    /**
+     * @return the hashcode of this IBAN's string representation
+     */
+    @Override
+    public int hashCode() {
+    	return ibanString.hashCode();
     }
     
     /**
@@ -166,7 +207,8 @@ public class Iban {
         
         this.countryCode = countryCode;
         this.bban = bbanFlat;
-        this.checksum = calculateChecksum();        
+        this.checksum = calculateChecksum();
+        this.ibanString = this.countryCode.toString() + this.checksum + this.bban;
     }
     
     /**
