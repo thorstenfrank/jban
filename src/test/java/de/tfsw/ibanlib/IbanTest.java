@@ -79,6 +79,22 @@ public class IbanTest {
         assertEquals("MT84MALT011000012345MTLCAST001S", iban.toString());
     }
     
+    /**
+     * This test needs to fail - even though the BBAN has the required length, the pattern doesn't match.
+     */
+    @Test(expected = BbanValidationException.class)
+    public void testCountrySpecificBbanValidation() {
+    	new Iban(CountryCode.BG, "1234 5678 9012 3456 78");
+    }
+    
+    /**
+     * The IBAN string passed to the constructor is valid per se, but the country-specific pattern doesn't match.
+     */
+    @Test(expected = BbanValidationException.class)
+    public void testCountrySpecificIbanValidation() {
+    	new Iban("GB25123456789012345678");
+    }
+    
     @Test(expected = InvalidChecksumException.class)
     public void testIbanConstructorInvalidChecksum() {
         new Iban("DE17 5001 0517 5407 3249 31");

@@ -203,6 +203,10 @@ public class Iban {
             throw new BbanValidationException(
                     String.format("BBAN for country %s must have %d characters, but was %d", 
                             countryCode, countryCode.getBbanLength(), bbanFlat.length()));
+        } else if (!bbanFlat.matches(countryCode.getBbanPattern())) {
+        	throw new BbanValidationException(
+        			String.format("BBAN [%s] does not match the required pattern for country code %s", 
+        					bbanFlat, countryCode.name()));
         }
         
         this.countryCode = countryCode;
