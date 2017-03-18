@@ -115,6 +115,16 @@ public class IbanTest {
         new Iban(CountryCode.DE, "5001 0517 5407 3249 310");
     }
     
+    @Test(expected = BbanValidationException.class)
+    public void testCompositeConstructorBbanNull() {
+    	new Iban(CountryCode.KW, null);
+    }
+
+    @Test(expected = BbanValidationException.class)
+    public void testCompositeConstructorBbanEmtpy() {
+    	new Iban(CountryCode.KW, "");
+    }
+    
     @Test
     public void testCompositeConstructor() {
         Iban iban = new Iban(CountryCode.DE, "5001 0517 5407 3249 31");

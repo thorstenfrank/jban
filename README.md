@@ -9,10 +9,10 @@ I needed this specific functionality in another project, so this is basically co
 ## Usage
 
 ```java
-  // using a complete IBAN string
+  // using a complete IBAN string - this will validate the IBAN string
   Iban iban = new Iban("MT84 MALT 0110 0001 2345 MTLC AST0 01S");
 
-  // or using the country code and BBAN:
+  // or using the country code and BBAN - in this case, the check digits are calculated
   Iban iban = new Iban(CountryCode.MT, "MALT 0110 0001 2345 MTLC AST0 01S");
 
   // the three basic building blocks are now available separately
