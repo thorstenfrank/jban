@@ -77,6 +77,8 @@ public class Iban {
 	 * @throws BbanValidationException
 	 *             if the BBAN part of the supplied string is invalid according
 	 *             to the country's IBAN specification
+	 *             
+	 * @see #validateIban(String)
 	 */
 	public Iban(String iban) {
 		super();
