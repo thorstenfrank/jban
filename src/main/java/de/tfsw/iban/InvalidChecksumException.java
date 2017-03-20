@@ -25,13 +25,12 @@ public class InvalidChecksumException extends RuntimeException {
     /**
      * 
      */
-    private static final long serialVersionUID = 1L;
-
+    private static final long serialVersionUID = 1L; 
+    
     /**
      * @param iban
-     * @param expected 
      */
-    public InvalidChecksumException(String iban, String expected) {
-        super(String.format("IBAN [%s] is invalid, checksum should be [%s]!", iban, expected));
+    public InvalidChecksumException(String iban) {
+        super(String.format("Checksum validation for IBAN [%s] failed", iban));
     }
 }

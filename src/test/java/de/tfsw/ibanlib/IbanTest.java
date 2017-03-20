@@ -24,40 +24,69 @@ import org.junit.Test;
 import de.tfsw.iban.BbanValidationException;
 import de.tfsw.iban.CountryCode;
 import de.tfsw.iban.Iban;
+import de.tfsw.iban.IbanFormatException;
 import de.tfsw.iban.InvalidChecksumException;
 import de.tfsw.iban.UnknownCountryCodeException;
 
 /**
+ * Unit tests for {@link Iban}.
+ * 
  * @author Thorsten Frank
  *
  */
 public class IbanTest {
     
-    @Test(expected = IllegalArgumentException.class)
+	/**
+	 * Passing <code>null</code> to {@link Iban#Iban(String)}.
+	 */
+    @Test(expected = IbanFormatException.class)
     public void testIbanConstructorNull() {
         new Iban(null);
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    /**
+     * Passing an empty string to {@link Iban#Iban(String)}.
+     */
+    @Test(expected = IbanFormatException.class)
     public void testIbanConstructorEmpty() {
         new Iban("");
     }
     
-    @Test(expected = BbanValidationException.class)
+    /**
+     * Passing an invalid format to {@link Iban#Iban(String)}.
+     */
+    @Test(expected = IbanFormatException.class)
+    public void testIllegalIbanFormat() {
+    	new Iban("12BC 5001 0517 54$7 3249 31");
+    }
+    
+    /**
+     * Test for {@link Iban#Iban(String)} - simply a string longer than the allowed 34 characters.
+     */
+    @Test(expected = IbanFormatException.class)
     public void testIbanConstructorTooLong() {
         new Iban("DE445001051754073249317891237892378");
     }
     
+    /**
+     * Using an unknown country code (ZZ). 
+     */
     @Test(expected = UnknownCountryCodeException.class)
     public void testIbanConstructorInvalidCountryCode() {
-        new Iban("ZZ445001051754073249317891237892378");
+        new Iban("ZZ82500105175407324931789123789237");
     }
     
-    @Test(expected = BbanValidationException.class)
+    /**
+     * Using an unallowed character (non-alpha-numeric).
+     */
+    @Test(expected = IbanFormatException.class)
     public void testChecksumValidationIllegalCharacter() {
         new Iban("DE44 5001 0517 54$7 3249 31");
     }
     
+    /**
+     * A collection of positive tests - all of the IBANs used here are taken directly from the IBAN Registry spec.
+     */
     @Test
     public void testIbanConstructor() {
         Iban iban = new Iban("DE44 5001 0517 5407 3249 31");
@@ -95,36 +124,57 @@ public class IbanTest {
     	new Iban("GB25123456789012345678");
     }
     
+    /**
+     * Modulo97 failure test by using wrong check digits.
+     */
     @Test(expected = InvalidChecksumException.class)
     public void testIbanConstructorInvalidChecksum() {
         new Iban("DE17 5001 0517 5407 3249 31");
     }
     
+    /**
+     * The IBAN used here is valid per se, but too long for the country used (DE).
+     */
     @Test(expected = BbanValidationException.class)
     public void testIbanConstructorBbanTooLong() {
-        new Iban("DE17 5001 0517 5407 3249 310");
+        new Iban("DE19 5001 0517 5407 3249 310");
     }
 
+    /**
+     * The IBAN used here is valid per se, but too short for the country used (DE).
+     */
     @Test(expected = BbanValidationException.class)
     public void testIbanConstructorBbanTooShort() {
-        new Iban("DE17 5001 0517 5407 3249 3");
+        new Iban("DE88 5001 0517 5407 3249 3");
     }
     
+    /**
+     * Similar to {@link #testIbanConstructorBbanTooLong()}
+     */
     @Test(expected = BbanValidationException.class)
     public void testCompositeConstructorBbanTooLong() {
         new Iban(CountryCode.DE, "5001 0517 5407 3249 310");
     }
     
+    /**
+     * Similar to {@link #testIbanConstructorNull()} but for {@link Iban#Iban(CountryCode, String)}.
+     */
     @Test(expected = BbanValidationException.class)
     public void testCompositeConstructorBbanNull() {
     	new Iban(CountryCode.KW, null);
     }
 
+    /**
+     * Similar to {@link #testIbanConstructorEmpty()} but for {@link Iban#Iban(CountryCode, String)}.
+     */
     @Test(expected = BbanValidationException.class)
     public void testCompositeConstructorBbanEmtpy() {
     	new Iban(CountryCode.KW, "");
     }
     
+    /**
+     * Positive tests for {@link Iban#Iban(CountryCode, String)}.
+     */
     @Test
     public void testCompositeConstructor() {
         Iban iban = new Iban(CountryCode.DE, "5001 0517 5407 3249 31");
@@ -141,15 +191,25 @@ public class IbanTest {
         assertEquals("LV80BANK0000435195001", iban.toString());
     }
     
+    /**
+     * Tests {@link Iban#toFormattedString()} and {@link Iban#toString()}
+     */
     @Test
-    public void testToFormattedString() {
-        Iban iban = new Iban("XK051212012345678906");
+    public void testToString() {
+    	final String ibanString = "XK051212012345678906"; 
+        Iban iban = new Iban(ibanString);
         assertEquals("XK05 1212 0123 4567 8906", iban.toFormattedString());
+        assertEquals(ibanString, iban.toString());
         
-        iban = new Iban(CountryCode.JO, "CBJO0010000000000131000302");
+        final String bbanString = "CBJO0010000000000131000302";
+        iban = new Iban(CountryCode.JO, bbanString);
         assertEquals("JO94 CBJO 0010 0000 0000 0131 0003 02", iban.toFormattedString());
+        assertEquals("JO94" + bbanString, iban.toString());
     }
     
+    /**
+     * Tests for {@link Iban#equals(Object)} and {@link Iban#hashCode()}.
+     */
     @Test
     public void testEqualsAndHashCode() {
     	Iban iban1 = new Iban("DE44 5001 0517 5407 3249 31");
@@ -163,5 +223,13 @@ public class IbanTest {
     	iban2 = new Iban("VG96VPVG0000012345678901");
     	assertNotEquals(iban1, iban2);
     	assertNotEquals(iban1.hashCode(), iban2.hashCode());
+    }
+    
+    /**
+     * Test for {@link Iban#validateIban(String)}.
+     */
+    @Test(expected = IbanFormatException.class)
+    public void testIbanValidationRelaxedNull() {
+    	Iban.validateIban(null);
     }
 }

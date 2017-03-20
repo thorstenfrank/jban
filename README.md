@@ -6,6 +6,10 @@ BBAN (country-specific basic bank account number).
 
 I needed this specific functionality in another project, so this is basically collateral.
 
+## Requirements
+
+None other than Java 1.5 or higher.
+
 ## Usage
 
 ```java
@@ -19,3 +23,12 @@ I needed this specific functionality in another project, so this is basically co
   iban.getCountryCode(); // CountryCode.MT - Malta
   iban.getChecksum() // 84
   iban.getBban() // MALT011000012345MTLCAST001S
+  
+  // If you just want to validate an IBAN string without instantiating an object...
+  try {
+      Iban.validateIban("MT84 MALT 0110 0001 2345 MTLC AST0 01S");
+  } catch (IbanFormatException e) {
+      ...
+  } catch (InvalidChecksumException e) {
+      ...
+  }
