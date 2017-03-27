@@ -24,6 +24,12 @@ None other than Java 1.5 or higher.
   iban.getChecksum() // 84
   iban.getBban() // MALT011000012345MTLCAST001S
   
+  // The machine readable format (no blanks) can be retrieved using
+  iban.toString(); // MT84MALT011000012345MTLCAST001S
+  
+  // The formatted version (adding a blank every four characters)
+  iban.toFormattedString(); // MT84 MALT 0110 0001 2345 MTLC AST0 01S
+  
   // If you just want to validate an IBAN string without instantiating an object...
   try {
       Iban.validateIban("MT84 MALT 0110 0001 2345 MTLC AST0 01S");
